@@ -138,7 +138,6 @@
     }
 
     function sort_by(comparator) {
-        console.log("xxx");
         todos.sort(comparator);
         todos =  [...todos];
     }
