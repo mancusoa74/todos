@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte';
+    import { scale } from 'svelte/transition';
 
     let editing_prio = false;
     let todos = [];
@@ -256,7 +257,7 @@
     
     {#if todos.length > 0} 
     {#each todos as todo, i (todo.id)}
-    <div class="row todo-item">
+    <div class="row todo-item" transition:scale="{{duration: 300, delay: 50}}">
         <div class="col-md-1 todo-item-cell border-left-0 text-center" on:click|preventDefault={() => cambiaStato(todo.id)}>
         {#if todo.stato === "NONE"}
             <svg class="icon-24" fill="#dc3545"><use href="#uncheck-item-icon"></use></svg>
