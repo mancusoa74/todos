@@ -9,7 +9,7 @@ It provides the Front-End and the REST-API Back-End which uses SQLite as DB.
 
 I have developed it to learn Svelte and I am using it for my day to day work.
 
-Currently it uses localStorage to save tasks. Next release should be able to use a REST API backend.
+This relase uses an express.js REST API backend.
 
 
 # run it
