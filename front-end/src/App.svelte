@@ -14,12 +14,15 @@
     };
 
     $: console.log(todos)
+    const todosUrl = "http://localhost:4000/todos";
     
     onMount(async () => {
-        todos = JSON.parse(localStorage.getItem("todos") || "[]");
+        let res = await fetch(todosUrl);
+        todos = await res.json();
+        console.log(todos);
     });
 
-    function newToDo() {
+    async function newToDo() {
         todo = {
             id: Date.now(),
             stato: "NONE",
@@ -27,32 +30,66 @@
             owner: "Antonio",
             scadenza: new Date().toISOString().slice(0, 10),
             prio: "BASSA",
-        };  
+        };
+        return todo;  
     }
     
-    function addToDo() {
-        newToDo();
+    async function addToDo() {
+        let todo = await newToDo();
+        let method = "POST";
         todos =  [...todos, todo];
-        localStorage.setItem('todos', JSON.stringify(todos));
+        const res = await fetch(todosUrl, {
+            method,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(todo)
+        });
+        todo = res.json();
+        console.log(todo);
     }
     
-    function cambiaStato(id) {
+    async function cambiaStato(id) {
         var todo = todos.find(function(element) {
             return element.id  == id;
         });
         let idx = todos.indexOf(todo);
         todos[idx].stato = (todos[idx].stato == "NONE" ? "WIP" : todos[idx].stato == "WIP"? "DONE" : "NONE");
-        localStorage.setItem('todos', JSON.stringify(todos));
+        
+        let method = "PUT";
+        const res = await fetch(todosUrl + '/' + todo.id, {
+            method,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(todos[idx])
+        });
+        todo = res.json();
+        console.log(todo);
     }
 
-    function salvaTask() {
+    async function salvaTask(task) {
+        console.log(task.id);
+        console.log(task);
         todos =  [...todos];
-        localStorage.setItem('todos', JSON.stringify(todos));
+
+        let method = "PUT";
+        const res = await fetch(todosUrl + '/' + task.id, {
+            method,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(task)
+        });
+        todo = res.json();
+        console.log(todo);
     }
 
-    function deleteToDo(id) {
+    async function deleteToDo(id) {
         todos = todos.filter(item => item.id !== Number(id));
-        localStorage.setItem('todos', JSON.stringify(todos));
+        let res = await fetch(todosUrl + '/' + id, {
+            method: "DELETE"
+        });
     }
 
     function prio2Class(prio) {
@@ -239,6 +276,7 @@
 
 <main>
 <div class="container">
+    {#if todos.length > 0} 
     <h1 class="app-title">todos</h1>
     <div class="row todo-header">
         <div class="col-md-1 todo-header-cell border-left-0 text-muted text-center"><svg class="icon-32" fill="#28a745" on:click={function() {sort_by(compare_stato)}}><use href="#stato-icon"></use></svg>
@@ -255,7 +293,6 @@
         </div>
     </div>
     
-    {#if todos.length > 0} 
     {#each todos as todo, i (todo.id)}
     <div class="row todo-item" transition:scale="{{duration: 300, delay: 50}}">
         <div class="col-md-1 todo-item-cell border-left-0 text-center" on:click|preventDefault={() => cambiaStato(todo.id)}>
@@ -268,20 +305,20 @@
         {/if}         
         </div>
         <div class="col-md-6 todo-item-cell border-left-0">
-            <input type="text" class="todo-item-input-text" id="task{todo.id}" placeholder="ToDo" bind:value={todo.task} on:change|preventDefault={function() {document.getElementById("task" + todo.id).blur(); salvaTask()}}>
+            <input type="text" class="todo-item-input-text" id="task{todo.id}" placeholder="ToDo" bind:value={todo.task} on:change|preventDefault={function() {document.getElementById("task" + todo.id).blur(); salvaTask(todo)}}>
         </div>
         <div class="col-md-1 todo-item-cell border-left-0">
-                <input type="text" class="todo-item-input-text text-center" id="owner{todo.id}" placeholder="ToDo" bind:value={todo.owner} on:change|preventDefault={function() {document.getElementById("owner" + todo.id).blur(); salvaTask()}}>
+                <input type="text" class="todo-item-input-text text-center" id="owner{todo.id}" placeholder="ToDo" bind:value={todo.owner} on:change|preventDefault={function() {document.getElementById("owner" + todo.id).blur(); salvaTask(todo)}}>
         </div>
         <div class="col-md-2 todo-item-cell border-left-0 text-center"><!-- <span class="badge badge-success">22/06</span> -->
             
-            <input type="date" id="scadenza{todo.id}"  min="2020-01-01" max="2028-12-31" class="scadenza {scadenza2Class(todo.scadenza)}" bind:value={todo.scadenza} on:change|preventDefault={function() {document.getElementById("scadenza" + todo.id).blur(); salvaTask()}}>
+            <input type="date" id="scadenza{todo.id}"  min="2020-01-01" max="2028-12-31" class="scadenza {scadenza2Class(todo.scadenza)}" bind:value={todo.scadenza} on:change|preventDefault={function() {document.getElementById("scadenza" + todo.id).blur(); salvaTask(todo)}}>
         </div>
         <div class="col-md-1 todo-item-cell border-left-0 text-center">
             {#if editing_prio == false}
                 <span class="badge  p-2 badge-{prio2Class(todo.prio)}" on:click|preventDefault={function() {editing_prio = true;}}>{todo.prio}</span>
             {:else if editing_prio == true}
-                <select id="prio{todo.id}" title="Scegli una opzione" bind:value={todo.prio} on:change|preventDefault={function() {document.getElementById("prio" + todo.id).blur(); editing_prio = false; salvaTask();}}>
+                <select id="prio{todo.id}" title="Scegli una opzione" bind:value={todo.prio} on:change|preventDefault={function() {document.getElementById("prio" + todo.id).blur(); editing_prio = false; salvaTask(todo);}}>
                     <option value="ALTA">ALTA</option>
                     <option value="MEDIA">MEDIA</option>
                     <option value="BASSA">BASSA</option>

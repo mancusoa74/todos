@@ -1,6 +1,7 @@
 {
-  "name": "svelte-app",
-  "version": "1.0.0",
+  "name": "todos-frontend",
+  "version": "0.1.0",
+  "description": "Todo Svelte Front-End",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",

@@ -1,0 +1,21 @@
+{
+  "name": "todos-backend",
+  "version": "0.1.0",
+  "description": "Todo Svelte Back-End",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Antonio Mancuso",
+  "license": "GPL",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.9.1",
+    "sequelize": "^5.21.12",
+    "sqlite3": "^4.2.0",
+    "compression": "^1.7.4"
+  }
+}
