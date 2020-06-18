@@ -220,6 +220,11 @@
         border: 0px;
     }
 
+    .text-done {
+        color: grey;
+        font-style: italic;
+    }
+
     .todo-item-input-text:hover  {
     }
 
@@ -264,6 +269,16 @@
         background-color: #28a745;
     }
 
+    .scadenza.done {
+        border: 0px;
+        background-color: grey;
+    }
+
+    .badge.done {
+        border: 0px;
+        background-color: grey;
+    }
+
     .app-title {
         font-family: 'Permanent Marker', cursive;
         text-align: left;
@@ -305,18 +320,17 @@
         {/if}         
         </div>
         <div class="col-md-6 todo-item-cell border-left-0">
-            <input type="text" class="todo-item-input-text" id="task{todo.id}" placeholder="ToDo" bind:value={todo.task} on:change|preventDefault={function() {document.getElementById("task" + todo.id).blur(); salvaTask(todo)}}>
+            <input type="text" class="todo-item-input-text {todo.stato === 'DONE' ? 'text-done' : ''}" id="task{todo.id}" placeholder="ToDo" bind:value={todo.task} on:change|preventDefault={function() {document.getElementById("task" + todo.id).blur(); salvaTask(todo)}}>
         </div>
         <div class="col-md-1 todo-item-cell border-left-0">
-                <input type="text" class="todo-item-input-text text-center" id="owner{todo.id}" placeholder="ToDo" bind:value={todo.owner} on:change|preventDefault={function() {document.getElementById("owner" + todo.id).blur(); salvaTask(todo)}}>
+                <input type="text" class="todo-item-input-text text-center {todo.stato === 'DONE' ? 'text-done' : ''}" id="owner{todo.id}" placeholder="ToDo" bind:value={todo.owner} on:change|preventDefault={function() {document.getElementById("owner" + todo.id).blur(); salvaTask(todo)}}>
         </div>
-        <div class="col-md-2 todo-item-cell border-left-0 text-center"><!-- <span class="badge badge-success">22/06</span> -->
-            
-            <input type="date" id="scadenza{todo.id}"  min="2020-01-01" max="2028-12-31" class="scadenza {scadenza2Class(todo.scadenza)}" bind:value={todo.scadenza} on:change|preventDefault={function() {document.getElementById("scadenza" + todo.id).blur(); salvaTask(todo)}}>
+        <div class="col-md-2 todo-item-cell border-left-0 text-center">
+            <input type="date" id="scadenza{todo.id}"  min="2020-01-01" max="2028-12-31" class="scadenza {scadenza2Class(todo.scadenza)} {todo.stato === 'DONE' ? 'done' : ''}" bind:value={todo.scadenza} on:change|preventDefault={function() {document.getElementById("scadenza" + todo.id).blur(); salvaTask(todo)}}>
         </div>
         <div class="col-md-1 todo-item-cell border-left-0 text-center">
             {#if editing_prio == false}
-                <span class="badge  p-2 badge-{prio2Class(todo.prio)}" on:click|preventDefault={function() {editing_prio = true;}}>{todo.prio}</span>
+                <span class="badge  p-2 badge-{prio2Class(todo.prio)} {todo.stato === 'DONE' ? 'done' : ''}" on:click|preventDefault={function() {editing_prio = true;}}>{todo.prio}</span>
             {:else if editing_prio == true}
                 <select id="prio{todo.id}" title="Scegli una opzione" bind:value={todo.prio} on:change|preventDefault={function() {document.getElementById("prio" + todo.id).blur(); editing_prio = false; salvaTask(todo);}}>
                     <option value="ALTA">ALTA</option>
