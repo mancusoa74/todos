@@ -12,14 +12,27 @@
         scadenza: "",
         prio: ""
     };
+    let pg_size = 12;
+    let pg_number = 1;
+    let pg_init_idx = (pg_number - 1) * pg_size;
+    let pg_max = 0;
 
-    $: console.log(todos)
+    $: {
+        console.log(todos);
+
+        pg_init_idx = (pg_number - 1) * pg_size;
+        pg_max = Math.ceil(todos.length / pg_size);
+        console.log('pg_init_idx', pg_init_idx);
+        console.log('pg_max', pg_max);
+    }
+
     const todosUrl = "http://localhost:4000/todos";
     
     onMount(async () => {
         let res = await fetch(todosUrl);
         todos = await res.json();
         console.log(todos);
+        pg_max = Math.ceil(todos.length / pg_size);
     });
 
     async function newToDo() {
@@ -47,6 +60,7 @@
         });
         todo = res.json();
         console.log(todo);
+        pg_number = pg_max;
     }
     
     async function cambiaStato(id) {
@@ -86,10 +100,17 @@
     }
 
     async function deleteToDo(id) {
+        let old_pg_max = pg_max;
         todos = todos.filter(item => item.id !== Number(id));
         let res = await fetch(todosUrl + '/' + id, {
             method: "DELETE"
         });
+
+        console.log('old_pg_max', old_pg_max);
+        console.log('pg_number', pg_number);
+        if (pg_max != old_pg_max && pg_number >= old_pg_max)
+                pg_number -=1;
+        console.log('pg_number', pg_number);
     }
 
     function prio2Class(prio) {
@@ -314,7 +335,8 @@
         </div>
     </div>
     
-    {#each todos as todo, i (todo.id)}
+    {#each todos as todo, idx (todo.id)}
+    {#if idx >= pg_init_idx && idx < pg_init_idx + pg_size} 
     <div class="row todo-item" transition:scale="{{duration: 300, delay: 50}}">
         <div class="col-md-1 todo-item-cell border-left-0 text-center" on:click|preventDefault={() => cambiaStato(todo.id)}>
         {#if todo.stato === "NONE"}
@@ -351,7 +373,21 @@
             </a>
         </div>
     </div>
+    {/if}
     {/each}
+
+    {#if pg_max > 1}
+     <div class="row">
+        <div class="col" style="padding: 30px;">
+            <ul class="pagination">
+                {#each Array(pg_max) as _, i}
+                    <li class="page-item {i === pg_number - 1 ? 'active': ''}"><a class="page-link" href="/" on:click|preventDefault={function() {pg_number =  i + 1;}}>{i + 1}</a></li>
+                {/each}
+          </ul>
+        </div>
+    </div>
+    {/if}
+
     {:else}
     <div class="row">
         <div class="col" style="padding: 30px;">
