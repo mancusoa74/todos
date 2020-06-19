@@ -225,9 +225,6 @@
         font-style: italic;
     }
 
-    .todo-item-input-text:hover  {
-    }
-
     .todo-item-input-text:focus  {
         background-color: #ffffff;
         font-weight: bold;
@@ -274,9 +271,18 @@
         background-color: grey;
     }
 
+    .badge {
+        width: 80%;
+    }
+    
     .badge.done {
         border: 0px;
         background-color: grey;
+        color: #fff;
+    }
+
+    .badge-warning {
+        color: #fff;
     }
 
     .app-title {
