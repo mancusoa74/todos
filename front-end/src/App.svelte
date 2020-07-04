@@ -12,7 +12,7 @@
         scadenza: "",
         prio: ""
     };
-    let pg_size = 12;
+    let pg_size = 10;
     let pg_number = 1;
     let pg_init_idx = (pg_number - 1) * pg_size;
     let pg_max = 0;
@@ -313,7 +313,6 @@
         font-size: 60px;
         opacity: 0.5;
     }
-
 </style>
 
 <main>
@@ -337,7 +336,7 @@
     
     {#each todos as todo, idx (todo.id)}
     {#if idx >= pg_init_idx && idx < pg_init_idx + pg_size} 
-    <div class="row todo-item" transition:scale="{{duration: 300, delay: 50}}">
+    <div class="row todo-item" in:scale="{{duration: 300, delay: 50}}">
         <div class="col-md-1 todo-item-cell border-left-0 text-center" on:click|preventDefault={() => cambiaStato(todo.id)}>
         {#if todo.stato === "NONE"}
             <svg class="icon-24" fill="#dc3545"><use href="#uncheck-item-icon"></use></svg>
