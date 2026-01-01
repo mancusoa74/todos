@@ -53,3 +53,4 @@ ToDos Back-End is running on 4000
 Executing (default): CREATE TABLE IF NOT EXISTS `todos` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `stato` VARCHAR(255), `task` VARCHAR(255), `owner` VARCHAR(255), `scadenza` VARCHAR(255), `prio` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
 Executing (default): PRAGMA INDEX_LIST(`todos`)
 ```
+x
